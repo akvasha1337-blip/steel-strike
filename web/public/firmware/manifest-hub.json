@@ -1,0 +1,17 @@
+{
+  "name": "Steel Strike hub (ESP32 DevKit V1)",
+  "version": "1.0.0",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "hub/bootloader.bin", "offset": 4096 },
+        { "path": "hub/partitions.bin", "offset": 32768 },
+        { "path": "hub/boot_app0.bin", "offset": 57344 },
+        { "path": "hub/firmware.bin", "offset": 65536 },
+        { "path": "hub/littlefs.bin", "offset": 3997696 }
+      ]
+    }
+  ]
+}

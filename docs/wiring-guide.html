@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Steel Strike Wiring Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Big+Shoulders+Display:wght@700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: a range control desk — a shot-timer readout over a dark berm where the plates stand. */
+:root {
+  /* dark-first: blued steel and hi-vis amber */
+  --bg: #0f1418;
+  --bg-2: #131a1f;
+  --panel: #182128;
+  --panel-2: #1f2a32;
+  --line: #2b3843;
+  --fg: #e7ecef;
+  --muted: #8e9ca7;
+  --accent: #ffb21a;
+  --accent-ink: #1a1203;
+  --go: #3ad17c;
+  --stop: #ff5252;
+  --warn: #ff8c21;
+  --steel: #59656f;
+  --steel-hi: #9aa6af;
+  --steel-lo: #2c353d;
+  --berm: #1a2228;
+  --berm-2: #222c33;
+  --focus: #6cc4ff;
+  --gd-gnd: #cfd6dc;
+  --shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 8px 24px rgba(0, 0, 0, 0.35);
+  --font-display: 'Big Shoulders Display', 'Oswald', 'Arial Narrow', Impact, sans-serif;
+  --font-body: 'Barlow', 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --r: 10px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) {
+    --bg: #eef1f3;
+    --bg-2: #e5e9ec;
+    --panel: #ffffff;
+    --panel-2: #f3f5f7;
+    --line: #d3dade;
+    --fg: #121a20;
+    --muted: #55636d;
+    --accent: #b86e00;
+    --accent-ink: #ffffff;
+    --go: #11924b;
+    --stop: #d22f2f;
+    --warn: #c25c00;
+    --steel: #8b969f;
+    --steel-hi: #c9d1d7;
+    --steel-lo: #5d6870;
+    --berm: #d9dfe3;
+    --berm-2: #cdd4d9;
+    --focus: #0b6fc2;
+    --gd-gnd: #1e252b;
+    --shadow: 0 1px 2px rgba(15, 25, 35, 0.06), 0 6px 18px rgba(15, 25, 35, 0.07);
+    color-scheme: light;
+  }
+}
+:root[data-theme='light'] {
+  --bg: #eef1f3;
+  --bg-2: #e5e9ec;
+  --panel: #ffffff;
+  --panel-2: #f3f5f7;
+  --line: #d3dade;
+  --fg: #121a20;
+  --muted: #55636d;
+  --accent: #b86e00;
+  --accent-ink: #ffffff;
+  --go: #11924b;
+  --stop: #d22f2f;
+  --warn: #c25c00;
+  --steel: #8b969f;
+  --steel-hi: #c9d1d7;
+  --steel-lo: #5d6870;
+  --berm: #d9dfe3;
+  --berm-2: #cdd4d9;
+  --focus: #0b6fc2;
+  --gd-gnd: #1e252b;
+  --shadow: 0 1px 2px rgba(15, 25, 35, 0.06), 0 6px 18px rgba(15, 25, 35, 0.07);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+a { color: var(--accent); }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+.tabnum { font-variant-numeric: tabular-nums; }
+
+/* ---------- shell ---------- */
+.shell { min-height: 100%; display: flex; flex-direction: column; }
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 16px; background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: baseline; gap: 8px; margin-right: auto; }
+.brand b { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1; }
+.brand b span { color: var(--accent); }
+.brand small { color: var(--muted); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+.nav { display: flex; gap: 4px; flex-wrap: wrap; order: 3; width: 100%; overflow-x: auto; }
+@media (min-width: 820px) { .nav { order: 0; width: auto; } }
+.nav button {
+  border: 0; background: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;
+  color: var(--muted); font-weight: 600; letter-spacing: 0.02em; white-space: nowrap;
+}
+.nav button[aria-current='page'] { color: var(--fg); background: var(--panel-2); box-shadow: inset 0 -2px 0 var(--accent); }
+.nav button:hover { color: var(--fg); }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px; padding: 5px 11px; border-radius: 999px;
+  background: var(--panel); border: 1px solid var(--line); font-size: 13px; font-weight: 600; white-space: nowrap;
+}
+.dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); flex: none; }
+.dot.ok { background: var(--go); box-shadow: 0 0 0 3px color-mix(in srgb, var(--go) 25%, transparent); }
+.dot.wait { background: var(--accent); animation: blink 1s infinite; }
+.dot.bad { background: var(--stop); }
+@keyframes blink { 50% { opacity: 0.3; } }
+.iconbtn { border: 1px solid var(--line); background: var(--panel); border-radius: 8px; padding: 6px 10px; cursor: pointer; font-size: 13px; font-weight: 600; }
+
+main.page { width: 100%; max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; display: grid; gap: 18px; }
+.pagehead { display: grid; gap: 4px; }
+.pagehead h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 5vw, 44px); text-transform: uppercase; letter-spacing: 0.02em; line-height: 1; }
+.pagehead p { margin: 0; color: var(--muted); max-width: 66ch; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; box-shadow: var(--shadow); min-width: 0; }
+.panel > h2, .section-title { font-family: var(--font-display); font-weight: 700; font-size: 21px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+.grid2 { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); align-items: start; }
+.grid3 { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+.stack { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+code { overflow-wrap: anywhere; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); font-weight: 600; }
+.note { padding: 10px 12px; border-radius: 8px; background: var(--panel-2); border-left: 3px solid var(--accent); font-size: 14px; }
+.note.bad { border-left-color: var(--stop); }
+.note.ok { border-left-color: var(--go); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 16px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel-2);
+  font-weight: 700; cursor: pointer; letter-spacing: 0.01em; min-height: 44px; text-decoration: none; color: var(--fg);
+}
+.btn:hover:not(:disabled) { border-color: var(--steel); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn.danger { background: var(--stop); color: #fff; border-color: transparent; }
+.btn.ghost { background: transparent; }
+.btn.big { font-size: 19px; padding: 14px 26px; min-height: 56px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; }
+.btn.sm { min-height: 34px; padding: 6px 11px; font-size: 14px; }
+
+.field { display: grid; gap: 5px; min-width: 0; }
+.field > span { font-size: 13px; font-weight: 600; color: var(--muted); }
+.field small { color: var(--muted); font-size: 12px; }
+input[type='text'], input[type='password'], input[type='number'], select {
+  width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-2); min-height: 42px;
+}
+input[type='range'] { width: 100%; accent-color: var(--accent); }
+input[type='checkbox'] { width: 20px; height: 20px; accent-color: var(--accent); }
+.check { display: flex; gap: 10px; align-items: center; cursor: pointer; min-height: 36px; }
+
+/* ---------- connect ---------- */
+.conn-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); }
+.conn {
+  text-align: left; display: grid; gap: 6px; align-content: start; padding: 16px; border-radius: var(--r);
+  border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; min-height: 132px;
+}
+.conn:hover:not(:disabled) { border-color: var(--accent); }
+.conn:disabled { cursor: not-allowed; opacity: 0.6; }
+.conn b { font-family: var(--font-display); font-size: 24px; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 800; }
+.conn .tag { justify-self: start; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.conn p { margin: 0; font-size: 14px; color: var(--muted); }
+.conn.on { border-color: var(--go); box-shadow: inset 0 0 0 1px var(--go); }
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.data th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+table.data td { padding: 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.scroll-x { overflow-x: auto; }
+.bars { display: inline-flex; gap: 2px; align-items: flex-end; height: 14px; vertical-align: middle; }
+.bars i { width: 4px; background: var(--line); border-radius: 1px; }
+.bars i.on { background: var(--go); }
+
+/* ---------- range & plates ---------- */
+.range {
+  position: relative; width: 100%; aspect-ratio: 16 / 7; border-radius: var(--r); overflow: hidden;
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-2) 72%, var(--berm) 72%, var(--berm-2) 100%);
+  border: 1px solid var(--line); touch-action: none; user-select: none; max-width: 100%;
+}
+.range.tall { aspect-ratio: 16 / 8; }
+.range .ground { position: absolute; left: 0; right: 0; top: 72%; height: 2px; background: var(--line); }
+.range .dist { position: absolute; right: 10px; bottom: 6px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-family: var(--font-mono); }
+.plate { position: absolute; transform: translate(-50%, -50%); display: grid; justify-items: center; cursor: pointer; width: calc(var(--pw, 8.6%) * var(--s, 1)); }
+.plate svg { overflow: visible; display: block; }
+.plate .cap { margin-top: 2px; font-family: var(--font-mono); font-size: clamp(10px, 1.4vw, 15px); font-weight: 700; white-space: nowrap; color: var(--fg); min-height: 1.3em; }
+.plate .nm { font-size: clamp(9px, 1.1vw, 12px); color: var(--muted); white-space: nowrap; letter-spacing: 0.04em; }
+.plate.drag { cursor: grab; }
+.plate.drag:active { cursor: grabbing; }
+.plate.sel .face { stroke: var(--focus); stroke-width: 3; }
+
+.face { transition: fill 120ms ease; }
+.st-idle .face { fill: url(#steelIdle); stroke: var(--steel-lo); stroke-width: 1.5; opacity: 0.75; }
+.st-active .face { fill: url(#steelLive); stroke: var(--accent); stroke-width: 3; }
+.st-active .halo { stroke: var(--accent); animation: halo 1.1s ease-in-out infinite; }
+@keyframes halo { 0%, 100% { opacity: 0.25; stroke-width: 4; } 50% { opacity: 0.95; stroke-width: 9; } }
+.st-hit .face { fill: var(--go); stroke: color-mix(in srgb, var(--go) 60%, #000); stroke-width: 2; }
+.st-miss .face { fill: var(--stop); stroke: color-mix(in srgb, var(--stop) 60%, #000); stroke-width: 2; }
+.st-noshoot .face { fill: url(#hatch); stroke: var(--warn); stroke-width: 3; }
+.st-owned .face { stroke-width: 3; }
+.st-offline .face { fill: var(--panel-2); stroke: var(--muted); stroke-dasharray: 5 4; stroke-width: 2; }
+.glyph { font-family: var(--font-display); font-weight: 800; pointer-events: none; }
+.ripple { fill: none; stroke-width: 4; animation: rippleScale 650ms ease-out forwards; pointer-events: none; }
+@keyframes rippleScale { from { transform: scale(1); opacity: 0.95; } to { transform: scale(3); opacity: 0; } }
+.flashfill { animation: flashfill 380ms ease-out forwards; pointer-events: none; }
+@keyframes flashfill { from { opacity: 0.85; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .st-active .halo { animation: none; opacity: 0.8; stroke-width: 6; }
+  .ripple, .flashfill { animation-duration: 1ms; }
+}
+
+/* ---------- setup ---------- */
+.tlist { display: grid; gap: 10px; }
+.tcard { display: grid; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel-2); }
+.tcard.sel { border-color: var(--focus); }
+.tcard header { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.tcard header b { font-family: var(--font-display); font-size: 22px; font-weight: 800; width: 1.4em; }
+.tcard .fields { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr)); }
+.meter { position: relative; height: 16px; border-radius: 4px; background: var(--bg-2); border: 1px solid var(--line); overflow: hidden; }
+.meter i { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, var(--go), var(--accent), var(--stop)); transition: width 90ms linear; }
+.meter b { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--fg); }
+
+/* ---------- play ---------- */
+.modes { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.mode {
+  text-align: left; display: grid; gap: 6px; align-content: start; padding: 14px; border-radius: var(--r);
+  border: 1px solid var(--line); background: var(--panel); cursor: pointer; min-height: 120px;
+}
+.mode:hover { border-color: var(--steel); }
+.mode[aria-pressed='true'] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.mode b { font-family: var(--font-display); font-size: 21px; text-transform: uppercase; letter-spacing: 0.03em; font-weight: 800; line-height: 1.05; }
+.mode p { margin: 0; font-size: 14px; color: var(--muted); }
+.mode .who { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+.mini-targets { display: flex; gap: 6px; flex-wrap: wrap; }
+.mini-targets button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--line); background: var(--panel-2); font-weight: 800; cursor: pointer; }
+.mini-targets button[aria-pressed='true'] { background: var(--stop); color: #fff; border-color: var(--stop); }
+.players-edit { display: grid; gap: 8px; }
+.players-edit .row input { flex: 1; min-width: 0; }
+
+/* ---------- game screen ---------- */
+.game { position: fixed; inset: 0; z-index: 50; background: var(--bg); display: flex; flex-direction: column; padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px calc(env(safe-area-inset-bottom, 0px) + 12px); gap: 10px; overflow-y: auto; }
+.game-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.game-top .title { font-family: var(--font-display); font-weight: 800; font-size: 20px; text-transform: uppercase; letter-spacing: 0.05em; margin-right: auto; }
+.readout { display: grid; grid-template-columns: 1fr; gap: 6px; justify-items: center; text-align: center; }
+.clock {
+  font-family: var(--font-display); font-weight: 800; line-height: 0.9; letter-spacing: 0.01em;
+  font-size: clamp(64px, min(15vw, 22vh), 190px); color: var(--fg); display: flex; align-items: baseline;
+}
+.clock .d { display: inline-block; width: 0.56em; text-align: center; }
+.clock .p { display: inline-block; width: 0.22em; text-align: center; }
+.clock .u { font-size: 0.28em; color: var(--muted); margin-left: 0.15em; }
+.clock.run { color: var(--accent); }
+.clock.standby { color: var(--muted); }
+.msg { font-family: var(--font-display); font-weight: 700; font-size: clamp(20px, 3.4vw, 38px); text-transform: uppercase; letter-spacing: 0.05em; min-height: 1.15em; }
+.sub { color: var(--muted); font-size: clamp(14px, 1.7vw, 18px); min-height: 1.4em; }
+.scores { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.score { display: grid; gap: 0; padding: 8px 16px; border-radius: 10px; background: var(--panel); border: 1px solid var(--line); min-width: 130px; text-align: center; }
+.score.active { border-color: var(--accent); }
+.score .n { font-size: 13px; color: var(--muted); font-weight: 600; letter-spacing: 0.04em; display: flex; gap: 6px; align-items: center; justify-content: center; }
+.score .v { font-family: var(--font-display); font-weight: 800; font-size: clamp(22px, 3vw, 34px); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.strip { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.strip span { min-width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; font-weight: 800; font-family: var(--font-mono); background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+.strip span.done { background: color-mix(in srgb, var(--go) 22%, var(--panel)); color: var(--go); border-color: transparent; }
+.strip span.cur { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.game-range { width: 100%; max-width: max(min(100%, 520px), calc((100dvh - 500px) * 2)); margin: 0 auto; }
+@media (max-width: 600px) { .range.tall { aspect-ratio: 4 / 3; --pw: 12.5%; } }
+.game-bottom { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; align-items: center; }
+.shots { font-family: var(--font-mono); font-size: 13px; color: var(--muted); display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-height: 4.2em; overflow: hidden; }
+.shots span { padding: 2px 7px; border-radius: 5px; background: var(--panel); border: 1px solid var(--line); }
+.shots span.bad { color: var(--stop); }
+.kbd { font-family: var(--font-mono); font-size: 12px; padding: 1px 5px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--panel); }
+.banner { text-align: center; padding: 10px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 18%, var(--panel)); border: 1px solid var(--accent); font-weight: 700; }
+
+/* ---------- results ---------- */
+.podium { display: grid; gap: 8px; }
+.prow { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 9px; background: var(--panel-2); }
+.prow .pos { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--muted); }
+.prow:first-child .pos { color: var(--accent); }
+.prow .big { font-family: var(--font-display); font-weight: 800; font-size: 28px; font-variant-numeric: tabular-nums; }
+.prow .who { font-weight: 700; }
+.timeline { display: grid; gap: 2px; }
+.tl { display: grid; grid-template-columns: 2.4em 4.6em 4.6em 1fr; gap: 8px; font-family: var(--font-mono); font-size: 13px; padding: 4px 6px; border-radius: 5px; }
+.tl:nth-child(odd) { background: var(--panel-2); }
+.tl.bad { color: var(--stop); }
+.splitbar { height: 8px; border-radius: 4px; background: var(--accent); align-self: center; min-width: 2px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.tabs button { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); cursor: pointer; font-size: 14px; font-weight: 600; }
+.tabs button[aria-pressed='true'] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+/* ---------- spectator ---------- */
+.spectator .clock { font-size: clamp(80px, 22vw, 260px); }
+
+/* ---------- guide (help screen) ---------- */
+.guide { display: grid; gap: 22px; }
+.guide h2 { font-family: var(--font-display); font-weight: 800; font-size: 28px; text-transform: uppercase; letter-spacing: 0.03em; }
+.guide h3 { font-size: 18px; margin-top: 4px; }
+.guide p, .guide li { max-width: 72ch; }
+.guide figure { margin: 0; display: grid; gap: 8px; }
+.guide figure .svgwrap { overflow-x: auto; background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--r); padding: 10px; }
+.guide figure svg { display: block; min-width: 640px; width: 100%; height: auto; }
+.guide figcaption { font-size: 14px; color: var(--muted); }
+.guide table { border-collapse: collapse; width: 100%; font-size: 14px; }
+.guide th, .guide td { border-bottom: 1px solid var(--line); padding: 7px 8px; text-align: left; vertical-align: top; }
+.guide th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.guide code { font-family: var(--font-mono); font-size: 0.92em; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; }
+.guide .steps { list-style: none; padding: 0; display: grid; gap: 8px; }
+.guide .steps li { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: start; }
+.guide .warn { border-left: 4px solid var(--stop); background: var(--panel-2); padding: 12px 14px; border-radius: 8px; }
+.guide .toc { display: flex; flex-wrap: wrap; gap: 6px; }
+.guide .toc a { font-size: 14px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); text-decoration: none; color: var(--fg); background: var(--panel); }
+
+@media print {
+  :root { color-scheme: light; }
+  .guide figure { break-inside: avoid; }
+  .guide .toc { display: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+<main class="page">
+<header class="pagehead"><h1>Steel Strike wiring guide</h1><p>Six wireless steel targets: ESP32-C3 nodes with piezo sensors and LEDs, an ESP32 hub at the shooting line, and the Steel Strike web app. Print this page or keep it open on a phone while you build.</p></header>
+<div class="panel"><article class="guide">
+<nav class="toc" aria-label="Guide sections">
+<a href="#g-overview">Overview</a><a href="#g-parts">Parts</a><a href="#g-piezo">Sensor circuit</a><a href="#g-node">Target node</a><a href="#g-led">LEDs</a><a href="#g-power">Power</a><a href="#g-mount">Mounting</a><a href="#g-hub">Hub pins</a><a href="#g-bench">Bench test</a><a href="#g-build">Assembly</a><a href="#g-test">Testing</a><a href="#g-trouble">Troubleshooting</a><a href="#g-safety">Safety</a>
+</nav>
+
+<section id="g-overview" class="stack">
+<h2>How it fits together</h2>
+<p>Each steel plate has a piezo disc that feels the impact. A small ESP32-C3 in a box behind the plate reads it, flashes the plate’s LEDs instantly, and radios the hit to the hub at the shooting line using ESP-NOW (no router needed). The hub passes hits to the laptop over USB, Bluetooth or Wi-Fi, and the web app runs the game.</p>
+<figure id="fig-overview"><div class="svgwrap"><svg viewBox="0 0 900 390" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="System overview: laptop, hub, and six wireless target nodes" font-family="var(--font-body), system-ui, sans-serif">
+<title>System overview: laptop, hub, and six wireless target nodes</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="900" height="390" fill="var(--panel-2)"/>
+<rect x="40" y="120" width="170" height="108" rx="8" fill="#20262c" stroke="#0c0f12" stroke-width="3"/><rect x="50" y="130" width="150" height="88" rx="3" fill="#0f1418"/><text x="125" y="170" text-anchor="middle" font-size="20" font-weight="800" fill="#ffb21a" font-family="var(--font-display),sans-serif">3.42 s</text><circle cx="80" cy="198" r="7" fill="#3ad17c"/><circle cx="100" cy="198" r="7" fill="#59656f"/><circle cx="120" cy="198" r="7" fill="#3ad17c"/><circle cx="140" cy="198" r="7" fill="#ffb21a"/><circle cx="160" cy="198" r="7" fill="#59656f"/><circle cx="180" cy="198" r="7" fill="#59656f"/><path d="M24,228 L226,228 L240,244 L10,244 Z" fill="#2b333a" stroke="#0c0f12" stroke-width="2"/><text x="125" y="270" class="tb" text-anchor="middle" >Laptop · Chrome or Edge</text><text x="125" y="288" class="ts" text-anchor="middle" >runs the Steel Strike web app</text><rect x="275" y="150" width="62" height="96" rx="6" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><rect x="288" y="160" width="36" height="30" rx="3" fill="#c4c9ce"/><text x="306" y="270" class="tb" text-anchor="middle" >Hub</text><text x="306" y="288" class="ts" text-anchor="middle" >ESP32 DevKit V1</text><path d="M212,210 L250,210 L250,235 L278,235" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="212" cy="210" r="4" fill="#8b5cf6"/><circle cx="278" cy="235" r="4" fill="#8b5cf6"/><text x="244" y="200" class="ts" text-anchor="middle" >USB</text><path d="M212,150 C240,120 260,120 290,148" class="dash"/><text x="250" y="118" class="ts" text-anchor="middle" >or Bluetooth / Wi-Fi</text><rect x="290" y="40" width="34" height="58" rx="6" fill="#20262c" stroke="#0c0f12" stroke-width="2"/><rect x="294" y="48" width="26" height="40" rx="2" fill="#0f1418"/><rect x="335" y="46" width="30" height="52" rx="6" fill="#20262c" stroke="#0c0f12" stroke-width="2"/><rect x="339" y="54" width="22" height="34" rx="2" fill="#0f1418"/><text x="380" y="64" class="tb" text-anchor="start" >Phones / tablets</text><text x="380" y="82" class="ts" text-anchor="start" >scoreboard over Wi-Fi</text><path d="M314,104 L314,145" class="dash"/><rect x="440" y="250" width="440" height="60" fill="var(--panel)" stroke="var(--line)"/><text x="660" y="330" class="ts" text-anchor="middle" >Berm / backstop</text><rect x="477" y="186" width="6" height="64" fill="#59656f"/><circle cx="480" cy="160" r="26" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><text x="480" y="166" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1f24">1</text><rect x="486" y="228" width="26" height="18" rx="3" fill="#ffb21a" stroke="#7a5200"/><rect x="549" y="204" width="6" height="46" fill="#59656f"/><circle cx="552" cy="178" r="26" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><text x="552" y="184" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1f24">2</text><rect x="558" y="228" width="26" height="18" rx="3" fill="#ffb21a" stroke="#7a5200"/><rect x="621" y="186" width="6" height="64" fill="#59656f"/><circle cx="624" cy="146" r="14" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><path d="M614,158 L634,158 L640,186 L608,186 Z" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><text x="624" y="178" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1f24">3</text><rect x="630" y="228" width="26" height="18" rx="3" fill="#ffb21a" stroke="#7a5200"/><rect x="693" y="204" width="6" height="46" fill="#59656f"/><circle cx="696" cy="178" r="26" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><text x="696" y="184" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1f24">4</text><rect x="702" y="228" width="26" height="18" rx="3" fill="#ffb21a" stroke="#7a5200"/><rect x="765" y="186" width="6" height="64" fill="#59656f"/><circle cx="768" cy="146" r="14" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><path d="M758,158 L778,158 L784,186 L752,186 Z" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><text x="768" y="178" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1f24">5</text><rect x="774" y="228" width="26" height="18" rx="3" fill="#ffb21a" stroke="#7a5200"/><rect x="837" y="204" width="6" height="46" fill="#59656f"/><circle cx="840" cy="178" r="26" fill="#8b969f" stroke="#2c353d" stroke-width="2"/><text x="840" y="184" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1f24">6</text><rect x="846" y="228" width="26" height="18" rx="3" fill="#ffb21a" stroke="#7a5200"/><path d="M352,198 C410,150 440,175 470,215" class="dash"/><path d="M353,186 a12,12 0 0,1 10,12" fill="none" stroke="var(--accent)" stroke-width="2.5"/><path d="M361,176 a24,24 0 0,1 20,24" fill="none" stroke="var(--accent)" stroke-width="2.5"/><path d="M369,166 a36,36 0 0,1 30,36" fill="none" stroke="var(--accent)" stroke-width="2.5"/><text x="395" y="140" class="tb" text-anchor="middle" >ESP-NOW radio</text><text x="395" y="158" class="ts" text-anchor="middle" >(no router needed)</text><text x="660" y="370" class="ts" text-anchor="middle" >Each plate: piezo sensor + ESP32-C3 node + LEDs + power bank (yellow box)</text><line x1="306" y1="350" x2="660" y2="350" stroke="var(--muted)" stroke-width="2" marker-end="url(#arr)" marker-start="url(#arr)"/><defs><marker id="arr" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker></defs><text x="483" y="344" class="tb" text-anchor="middle" >10–15 m</text>
+</svg></div><figcaption>Figure 1 — System overview. Default build: 6 wireless target nodes, hub on USB.</figcaption></figure>
+</section>
+
+<section id="g-parts" class="stack">
+<h2>Parts list</h2>
+<p>Prices are rough Canadian dollars from AliExpress / Amazon.ca in 2026. Everything for six plates (excluding the plates and stands) comes to about $150–220 including power banks.</p>
+<div class="scroll-x"><table><thead><tr><th>Item</th><th>Qty</th><th>Approx. CAD</th><th>Search for</th></tr></thead><tbody><tr><td>ESP32 DevKit V1 (WROOM-32, 30-pin) — hub</td><td>1</td><td>$8–12</td><td><code>ESP32 DevKit V1 30pin CP2102</code></td></tr><tr><td>ESP32-C3 SuperMini — one per plate + spare</td><td>7</td><td>$4–6 each</td><td><code>ESP32-C3 SuperMini</code></td></tr><tr><td>Piezo discs 27–35 mm with leads</td><td>12</td><td>$6 / 10 pack</td><td><code>piezo disc 35mm with wire</code></td></tr><tr><td>1 MΩ resistor (¼ W)</td><td>6 (+ spares)</td><td>$5 kit</td><td><code>resistor kit 1/4W</code></td></tr><tr><td>10 kΩ resistor</td><td>6</td><td>in kit</td><td><code>—</code></td></tr><tr><td>100 kΩ resistor (optional supply sense)</td><td>12</td><td>in kit</td><td><code>—</code></td></tr><tr><td>330 Ω resistor (LED data)</td><td>6</td><td>in kit</td><td><code>—</code></td></tr><tr><td>3.3 V Zener BZX55C3V3 (or BAT54S dual Schottky)</td><td>6 (+ spares)</td><td>$5 / 50</td><td><code>BZX55C3V3 zener</code></td></tr><tr><td>WS2812B IP67 strip, 60 LED/m — cut 8 LEDs per plate</td><td>1 m</td><td>$10–15</td><td><code>WS2812B IP67 60 led 1m</code></td></tr><tr><td>1000 µF 10 V electrolytic capacitor</td><td>6</td><td>$6 / 10</td><td><code>1000uF 10V capacitor</code></td></tr><tr><td>74AHCT125 level shifter (optional)</td><td>0–6</td><td>$4 / 5</td><td><code>74AHCT125 DIP</code></td></tr><tr><td>10 000 mAh USB power bank with “low current / always on” mode</td><td>6</td><td>$15–25 each</td><td><code>power bank low current mode 10000mAh</code></td></tr><tr><td>Short USB-C cables (30 cm)</td><td>7</td><td>$10 / 5</td><td><code>USB C short cable 30cm</code></td></tr><tr><td>Waterproof ABS junction box ~100×68×50 mm + cable glands</td><td>6</td><td>$15 / 6</td><td><code>ABS junction box IP65 100x68x50</code></td></tr><tr><td>Shielded 2-core cable (piezo lead, and Layout A runs)</td><td>5 m</td><td>$8</td><td><code>shielded 2 core microphone cable</code></td></tr><tr><td>JST-SM 3-pin or GX12 connectors (unplug LEDs / sensors)</td><td>12 pairs</td><td>$10</td><td><code>JST SM 3 pin connector pairs</code></td></tr><tr><td>Neoprene pad, 2-part epoxy (high strength), VHB tape</td><td>1 each</td><td>$15</td><td><code>JB Weld epoxy, neoprene sheet</code></td></tr><tr><td>Steel or 18 mm plywood deflector per box, white backer board</td><td>6</td><td>scrap</td><td><code>—</code></td></tr><tr><td>Layout A only: 12 V LiFePO4 7 Ah + LM2596 buck + 3 A inline fuse</td><td>1</td><td>$60–80</td><td><code>LM2596 buck converter, 12V LiFePO4 7Ah</code></td></tr></tbody></table></div>
+<h3>Tools</h3>
+<p>Soldering iron and solder, multimeter, wire strippers, heat-shrink tubing and a lighter or heat gun, small drill for cable glands, side cutters, a rubber mallet for testing.</p>
+</section>
+
+<section id="g-piezo" class="stack">
+<h2>Sensor circuit (one per plate)</h2>
+<p>A piezo disc hit by a bullet impact can produce tens of volts. These three parts make that safe for the ESP32 and give a clean signal.</p>
+<figure id="fig-piezo"><div class="svgwrap"><svg viewBox="0 0 900 410" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Piezo protection circuit: 1 megohm across the disc, 10 kilohm in series, 3.3 V Zener to ground" font-family="var(--font-body), system-ui, sans-serif">
+<title>Piezo protection circuit: 1 megohm across the disc, 10 kilohm in series, 3.3 V Zener to ground</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="900" height="410" fill="var(--panel-2)"/>
+<circle cx="90" cy="150" r="46" fill="#c9a13b" stroke="#7a5d14" stroke-width="2"/>
+<circle cx="90" cy="150" r="28.52" fill="#e9e3d4" stroke="#9c9179" stroke-width="1.5"/>
+<circle cx="99.2" cy="143.1" r="3" fill="#b5b5b5"/>
+<circle cx="124.5" cy="154.6" r="3" fill="#b5b5b5"/>
+<text x="90" y="216" class="tb" text-anchor="middle" >Piezo disc (27–35 mm)</text><path d="M100,140 L170,140 L170,90 L230,90" fill="none" stroke="#e5484d" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="100" cy="140" r="4" fill="#e5484d"/><circle cx="230" cy="90" r="4" fill="#e5484d"/><text x="178" y="80" class="ts" text-anchor="start" >red lead (+)</text><path d="M132,160 L170,160 L170,270 L230,270" fill="none" stroke="var(--gd-gnd)" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="132" cy="160" r="4" fill="var(--gd-gnd)"/><circle cx="230" cy="270" r="4" fill="var(--gd-gnd)"/><text x="178" y="290" class="ts" text-anchor="start" >black lead (−, brass)</text><path d="M230,90 L290,90" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="290" cy="90" r="5" fill="#e8b400"/><polyline points="290,146 290,152 297,156 283,164 297,172 283,180 297,188 283,196 297,204 290,208 290,214" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="276" y="185" class="tb" text-anchor="end" >1 MΩ</text><path d="M290,90 L290,146" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M290,214 L290,270" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M290,90 L366,90" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="366,90 372,90 376,97 384,83 392,97 400,83 408,97 416,83 424,97 428,90 434,90" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="400" y="77" class="tb" text-anchor="middle" >10 kΩ</text><path d="M434,90 L520,90" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="520" cy="90" r="5" fill="#e8b400"/><path d="M520,90 L520,146" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="520" y1="146" x2="520" y2="168" stroke="var(--fg)" stroke-width="2.5"/>
+<polygon points="508,190 532,190 520,170" fill="var(--fg)"/>
+<polyline points="504,174 508,168 532,168 536,162" fill="none" stroke="var(--fg)" stroke-width="2.5"/>
+<line x1="520" y1="190" x2="520" y2="214" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="540" y="185" class="tb" text-anchor="start" >3.3 V Zener</text><text x="540" y="204" class="ts" text-anchor="start" >BZX55C3V3 · band to signal</text><path d="M520,214 L520,270" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M230,270 L700,270" fill="none" stroke="var(--gd-gnd)" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="290" cy="270" r="5" fill="var(--gd-gnd)"/><circle cx="520" cy="270" r="5" fill="var(--gd-gnd)"/><line x1="400" y1="270" x2="400" y2="280" stroke="var(--gd-gnd)" stroke-width="2.5"/>
+<line x1="386" y1="280" x2="414" y2="280" stroke="var(--gd-gnd)" stroke-width="2.5"/>
+<line x1="391" y1="285" x2="409" y2="285" stroke="var(--gd-gnd)" stroke-width="2.5"/>
+<line x1="396" y1="290" x2="404" y2="290" stroke="var(--gd-gnd)" stroke-width="2.5"/><path d="M520,90 L700,90" fill="none" stroke="#e8b400" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"/><rect x="700" y="60" width="170" height="240" rx="10" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><rect x="706" y="83" width="14" height="14" rx="2" class="pin"/><rect x="706" y="263" width="14" height="14" rx="2" class="pin"/><text x="728" y="95" class="pl">ADC input</text><text x="728" y="275" class="pl">GND</text><text x="728" y="140" class="pl" text-anchor="start" >Node (C3): GPIO0</text><text x="728" y="158" class="pl" text-anchor="start" >Hub (wired):</text><text x="728" y="176" class="pl" text-anchor="start" >GPIO36/39/34/35/32/33</text><text x="785" y="325" class="tb" text-anchor="middle" >ESP32</text><circle cx="250" cy="60" r="12" fill="var(--accent)"/><text x="250" y="65" text-anchor="middle" font-size="13" font-weight="800" fill="var(--accent-ink)">1</text><circle cx="400" cy="52" r="12" fill="var(--accent)"/><text x="400" y="57" text-anchor="middle" font-size="13" font-weight="800" fill="var(--accent-ink)">2</text><circle cx="560" cy="60" r="12" fill="var(--accent)"/><text x="560" y="65" text-anchor="middle" font-size="13" font-weight="800" fill="var(--accent-ink)">3</text><text x="40" y="345" class="ts" text-anchor="start" >① 1 MΩ across the piezo drains its charge and sets sensitivity (lower value = less sensitive).</text><text x="40" y="363" class="ts" text-anchor="start" >② 10 kΩ in series limits the current from the huge spike a bullet strike makes.</text><text x="40" y="381" class="ts" text-anchor="start" >③ The Zener clamps the signal near 3.3 V so the ESP32 input survives. Alternative: a BAT54S dual Schottky from the signal to 3V3 and GND.</text>
+</svg></div><figcaption>Figure 2 — Piezo protection circuit. Same circuit for every target, in the node box (or at the hub for the wired layout).</figcaption></figure>
+</section>
+
+<section id="g-node" class="stack">
+<h2>Target node — ESP32-C3 SuperMini</h2>
+<figure id="fig-node"><div class="svgwrap"><svg viewBox="0 0 1060 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Target node wiring on an ESP32-C3 SuperMini: piezo to GPIO0, LED data on GPIO10, power from a USB power bank" font-family="var(--font-body), system-ui, sans-serif">
+<title>Target node wiring on an ESP32-C3 SuperMini: piezo to GPIO0, LED data on GPIO10, power from a USB power bank</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="1060" height="620" fill="var(--panel-2)"/>
+<rect x="420" y="18" width="200" height="48" rx="10" fill="#2b333a" stroke="#0c0f12" stroke-width="2"/><text x="520" y="47" class="tb" text-anchor="middle" style="fill:#f4f6f8">10 000 mAh power bank</text><path d="M520,66 L520,116" fill="none" stroke="#8b5cf6" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><text x="532" y="96" class="ts" text-anchor="start" >USB-C cable</text><rect x="430" y="130" width="180" height="310" rx="10" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><rect x="484" y="148" width="72" height="99.2" rx="4" fill="#c4c9ce" stroke="#7d858c"/><text x="520" y="201.6" text-anchor="middle" font-size="11" font-weight="700" fill="#3a4148">ESP32-C3</text><rect x="498" y="118" width="44" height="16" rx="4" fill="#b8bec4" stroke="#6f777e"/><rect x="436" y="169" width="14" height="14" rx="2" class="pin"/><text x="456" y="180" class="pl">5V</text><rect x="433" y="166" width="20" height="20" rx="3" fill="none" stroke="#e5484d" stroke-width="3"/><rect x="436" y="199" width="14" height="14" rx="2" class="pin"/><text x="456" y="210" class="pl">GND</text><rect x="433" y="196" width="20" height="20" rx="3" fill="none" stroke="var(--gd-gnd)" stroke-width="3"/><rect x="436" y="229" width="14" height="14" rx="2" class="pin"/><text x="456" y="240" class="pl">3V3</text><rect x="436" y="259" width="14" height="14" rx="2" class="pin"/><text x="456" y="270" class="pl">GPIO4</text><rect x="436" y="289" width="14" height="14" rx="2" class="pin"/><text x="456" y="300" class="pl">GPIO3</text><rect x="436" y="319" width="14" height="14" rx="2" class="pin"/><text x="456" y="330" class="pl">GPIO2</text><rect x="436" y="349" width="14" height="14" rx="2" class="pin"/><text x="456" y="360" class="pl">GPIO1</text><rect x="433" y="346" width="20" height="20" rx="3" fill="none" stroke="#2f9bef" stroke-width="3"/><rect x="436" y="379" width="14" height="14" rx="2" class="pin"/><text x="456" y="390" class="pl">GPIO0</text><rect x="433" y="376" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="590" y="169" width="14" height="14" rx="2" class="pin"/><text x="584" y="180" class="pl" text-anchor="end">GPIO5</text><rect x="590" y="199" width="14" height="14" rx="2" class="pin"/><text x="584" y="210" class="pl" text-anchor="end">GPIO6</text><rect x="590" y="229" width="14" height="14" rx="2" class="pin"/><text x="584" y="240" class="pl" text-anchor="end">GPIO7</text><rect x="590" y="259" width="14" height="14" rx="2" class="pin"/><text x="584" y="270" class="pl" text-anchor="end">GPIO8</text><rect x="590" y="289" width="14" height="14" rx="2" class="pin"/><text x="584" y="300" class="pl" text-anchor="end">GPIO9</text><rect x="590" y="319" width="14" height="14" rx="2" class="pin"/><text x="584" y="330" class="pl" text-anchor="end">GPIO10</text><rect x="587" y="316" width="20" height="20" rx="3" fill="none" stroke="#22a86e" stroke-width="3"/><rect x="590" y="349" width="14" height="14" rx="2" class="pin"/><text x="584" y="360" class="pl" text-anchor="end">GPIO20</text><rect x="590" y="379" width="14" height="14" rx="2" class="pin"/><text x="584" y="390" class="pl" text-anchor="end">GPIO21</text><text x="520" y="466" text-anchor="middle" class="tb">ESP32-C3 SuperMini</text><text x="520" y="484" text-anchor="middle" class="ts">top view, USB-C at the top</text><path d="M436,176 L392,176" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="436" cy="176" r="4" fill="#e5484d"/><circle cx="392" cy="176" r="4" fill="#e5484d"/><rect x="339.7" y="164" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="360" y="180.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><path d="M436,206 L392,206" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="436" cy="206" r="4" fill="var(--gd-gnd)"/><circle cx="392" cy="206" r="4" fill="var(--gd-gnd)"/><rect x="339.7" y="194" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="360" y="210.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><path d="M436,356 L392,356" fill="none" stroke="#2f9bef" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="436" cy="356" r="4" fill="#2f9bef"/><circle cx="392" cy="356" r="4" fill="#2f9bef"/><rect x="323.5" y="344" width="57" height="24" rx="12" fill="var(--panel)" stroke="#2f9bef" stroke-width="2.5"/><text x="352" y="360.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">SENSE</text><text x="30" y="405" class="tb" text-anchor="start" >Piezo circuit (Figure 2)</text><circle cx="100" cy="490" r="30" fill="#c9a13b" stroke="#7a5d14" stroke-width="2"/>
+<circle cx="100" cy="490" r="18.6" fill="#e9e3d4" stroke="#9c9179" stroke-width="1.5"/>
+<circle cx="106" cy="485.5" r="3" fill="#b5b5b5"/>
+<circle cx="122.5" cy="493" r="3" fill="#b5b5b5"/>
+<text x="100" y="540" class="tb" text-anchor="middle" >Piezo</text><path d="M108,482 L140,482 L140,440 L170,440" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="108" cy="482" r="4" fill="#e5484d"/><circle cx="170" cy="440" r="4" fill="#e5484d"/><circle cx="170" cy="440" r="5" fill="#e8b400"/><path d="M170,440 L216,440" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="216,440 222,440 226,447 234,433 242,447 250,433 258,447 266,433 274,447 278,440 284,440" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="250" y="427" class="tb" text-anchor="middle" >10 kΩ</text><path d="M284,440 L330,440" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="330" cy="440" r="5" fill="#e8b400"/><path d="M330,440 L404,440 L404,386 L436,386" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="330" cy="440" r="4" fill="#e8b400"/><circle cx="436" cy="386" r="4" fill="#e8b400"/><path d="M170,440 L170,456" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="170,456 170,462 177,466 163,474 177,482 163,490 177,498 163,506 177,514 170,518 170,524" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="184" y="495" class="tb" text-anchor="start" >1 MΩ</text><path d="M330,440 L330,456" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="330" y1="456" x2="330" y2="478" stroke="var(--fg)" stroke-width="2.5"/>
+<polygon points="318,500 342,500 330,480" fill="var(--fg)"/>
+<polyline points="314,484 318,478 342,478 346,472" fill="none" stroke="var(--fg)" stroke-width="2.5"/>
+<line x1="330" y1="500" x2="330" y2="524" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="350" y="495" class="tb" text-anchor="start" >Zener</text><path d="M80,506 L80,556 L380,556" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M170,524 L170,556" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M330,524 L330,556" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="170" cy="556" r="5" fill="var(--gd-gnd)"/><circle cx="330" cy="556" r="5" fill="var(--gd-gnd)"/><rect x="389.7" y="544" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="410" y="560.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><rect x="730" y="304" width="306" height="44" rx="6" fill="#f2f2f0" stroke="#9a9a93"/><rect x="759" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="770" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="793" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="804" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="827" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="838" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="861" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="872" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="895" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="906" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="929" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="940" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="963" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="974" cy="326" r="7" fill="#22c55e" opacity="0.9"/><rect x="997" y="315" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="1008" cy="326" r="7" fill="#22c55e" opacity="0.9"/><text x="736" y="317" font-size="9" fill="#555">5V</text><text x="736" y="330" font-size="9" fill="#555">DIN</text><text x="736" y="343" font-size="9" fill="#555">GND</text><path d="M1026,326 l8,0" stroke="#999" stroke-width="2"/><text x="883" y="366" text-anchor="middle" class="ts">WS2812B · arrow points away from DIN</text><path d="M604,326 L626,326" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="626,326 632,326 636,333 644,319 652,333 660,319 668,333 676,319 684,333 688,326 694,326" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="660" y="313" class="tb" text-anchor="middle" >330 Ω</text><path d="M694,326 L730,326" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="694" cy="326" r="4" fill="#22a86e"/><circle cx="730" cy="326" r="4" fill="#22a86e"/><path d="M730,313 L716,313 L716,262" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="730" cy="313" r="4" fill="#e5484d"/><circle cx="716" cy="262" r="4" fill="#e5484d"/><rect x="695.7" y="238" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="716" y="254.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><path d="M730,339 L716,339 L716,392" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="730" cy="339" r="4" fill="var(--gd-gnd)"/><circle cx="716" cy="392" r="4" fill="var(--gd-gnd)"/><rect x="695.7" y="392" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="716" y="408.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><rect x="859.7" y="88" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="880" y="104.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><path d="M880,112 L880,126" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="880" y1="126" x2="880" y2="151" stroke="var(--fg)" stroke-width="2.5"/>
+<line x1="866" y1="151" x2="894" y2="151" stroke="var(--fg)" stroke-width="3"/>
+<path d="M866,163 Q880,157 894,163" fill="none" stroke="var(--fg)" stroke-width="3"/>
+<line x1="880" y1="160" x2="880" y2="186" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="900" y="161" class="tb" text-anchor="start" >1000 µF</text><path d="M880,186 L880,200" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="859.7" y="200" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="880" y="216.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><text x="900" y="178" class="ts" text-anchor="start" >stripe = −</text><text x="820" y="250" class="ts" text-anchor="start" >fit close to the strip</text><rect x="20" y="20" width="350" height="150" rx="10" fill="none" stroke="var(--line)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="36" y="46" class="tb" text-anchor="start" >Optional: supply sense</text><rect x="45.7" y="88" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="66" y="104.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><path d="M88,100 L104,100" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="104,100 110,100 114,107 122,93 130,107 138,93 146,107 154,93 162,107 166,100 172,100" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="138" y="87" class="tb" text-anchor="middle" >100 kΩ</text><path d="M172,100 L228,100" fill="none" stroke="#2f9bef" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="200" cy="100" r="5" fill="#2f9bef"/><polyline points="228,100 234,100 238,107 246,93 254,107 262,93 270,107 278,93 286,107 290,100 296,100" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="262" y="87" class="tb" text-anchor="middle" >100 kΩ</text><path d="M296,100 L306,100" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="309.7" y="88" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="330" y="104.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><path d="M200,100 L200,128" fill="none" stroke="#2f9bef" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><rect x="171.5" y="130" width="57" height="24" rx="12" fill="var(--panel)" stroke="#2f9bef" stroke-width="2.5"/><text x="200" y="146.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">SENSE</text><text x="36" y="162" class="ts" text-anchor="start" >≈ 2.5 V at GPIO1 when the bank gives 5 V</text><line x1="740" y1="470" x2="768" y2="470" stroke="#e8b400" stroke-width="4" stroke-linecap="round"/><text x="776" y="475" class="ts" text-anchor="start" >Piezo signal → GPIO0</text><line x1="740" y1="492" x2="768" y2="492" stroke="#22a86e" stroke-width="4" stroke-linecap="round"/><text x="776" y="497" class="ts" text-anchor="start" >LED data ← GPIO10</text><line x1="740" y1="514" x2="768" y2="514" stroke="#2f9bef" stroke-width="4" stroke-linecap="round"/><text x="776" y="519" class="ts" text-anchor="start" >Supply sense → GPIO1</text><line x1="740" y1="536" x2="768" y2="536" stroke="#e5484d" stroke-width="4" stroke-linecap="round"/><text x="776" y="541" class="ts" text-anchor="start" >5 V (from USB)</text><line x1="740" y1="558" x2="768" y2="558" stroke="var(--gd-gnd)" stroke-width="4" stroke-linecap="round"/><text x="776" y="563" class="ts" text-anchor="start" >Ground</text><text x="30" y="600" class="ts" text-anchor="start" >Tags with the same name are connected together (e.g. every GND). Strip: 8 LEDs, brightness capped at 40 % in firmware.</text>
+</svg></div><figcaption>Figure 3 — One target node. Power comes in through the USB-C socket from the power bank; the board’s 5V pin then feeds the LEDs.</figcaption></figure>
+<div class="scroll-x"><table><thead><tr><th>C3 pin</th><th>Connects to</th><th>Why this pin</th></tr></thead><tbody>
+<tr><td><code>GPIO0</code></td><td>Piezo signal (after 10 kΩ, with 1 MΩ and Zener to GND)</td><td>ADC1 channel 0 — analog input that works while the radio is on</td></tr>
+<tr><td><code>GPIO10</code></td><td>330 Ω → LED strip DIN</td><td>Plain output, not a boot or strapping pin</td></tr>
+<tr><td><code>GPIO1</code></td><td>Middle of 100 k / 100 k divider from 5V (optional)</td><td>ADC1 channel 1 — lets the app show supply voltage</td></tr>
+<tr><td><code>5V</code></td><td>LED strip 5V, capacitor +, divider top</td><td>USB 5 V passes through to this pin</td></tr>
+<tr><td><code>GND</code></td><td>Piezo −, 1 MΩ, Zener anode, LED GND, capacitor −</td><td>One shared ground</td></tr>
+<tr><td><code>GPIO9 (BOOT)</code></td><td>On-board button</td><td>Hold 5 s to make the node forget its hub and look for a new one</td></tr>
+<tr><td><code>GPIO8</code></td><td>On-board blue LED</td><td>Status: fast blink = searching, slow = paired, solid flash = hit</td></tr>
+</tbody></table></div>
+<p class="note">Avoid <code>GPIO2</code>, <code>GPIO8</code> and <code>GPIO9</code> for sensors: they decide how the chip boots. <code>GPIO5</code> is on ADC2 and can’t read analog while the radio runs.</p>
+</section>
+
+<section id="g-led" class="stack">
+<h2>LED indicator</h2>
+<figure id="fig-led"><div class="svgwrap"><svg viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LED strip wiring with capacitor, 330 ohm data resistor and optional level shifter" font-family="var(--font-body), system-ui, sans-serif">
+<title>LED strip wiring with capacitor, 330 ohm data resistor and optional level shifter</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="900" height="440" fill="var(--panel-2)"/>
+<rect x="30" y="60" width="130" height="200" rx="10" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><text x="95" y="285" text-anchor="middle" class="tb">ESP32</text><rect x="146" y="93" width="14" height="14" rx="2" class="pin"/><text x="140" y="104" class="pl" text-anchor="end">GPIO data</text><rect x="146" y="188" width="14" height="14" rx="2" class="pin"/><text x="140" y="199" class="pl" text-anchor="end">5V</text><rect x="146" y="248" width="14" height="14" rx="2" class="pin"/><text x="140" y="259" class="pl" text-anchor="end">GND</text><rect x="250" y="64" width="130" height="72" rx="6" fill="#222" stroke="#000"/><text x="315" y="96" text-anchor="middle" style="fill:#ddd" font-size="13" font-weight="700">74AHCT125</text><text x="315" y="114" text-anchor="middle" style="fill:#aaa" font-size="11">optional</text><text x="315" y="156" class="ts" text-anchor="middle" >pin 2 in · pin 3 out · pin 1 → GND</text><text x="315" y="172" class="ts" text-anchor="middle" >pin 14 → 5V · pin 7 → GND</text><path d="M160,100 L250,100" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="160" cy="100" r="4" fill="#22a86e"/><circle cx="250" cy="100" r="4" fill="#22a86e"/><path d="M380,100 L440,100" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="440,100 446,100 450,107 458,93 466,107 474,93 482,107 490,93 498,107 502,100 508,100" fill="none" stroke="var(--fg)" stroke-width="2.5" stroke-linejoin="round"/><text x="474" y="87" class="tb" text-anchor="middle" >330 Ω</text><rect x="600" y="78" width="238" height="44" rx="6" fill="#f2f2f0" stroke="#9a9a93"/><rect x="629" y="89" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="640" cy="100" r="7" fill="#22c55e" opacity="0.9"/><rect x="663" y="89" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="674" cy="100" r="7" fill="#22c55e" opacity="0.9"/><rect x="697" y="89" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="708" cy="100" r="7" fill="#22c55e" opacity="0.9"/><rect x="731" y="89" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="742" cy="100" r="7" fill="#22c55e" opacity="0.9"/><rect x="765" y="89" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="776" cy="100" r="7" fill="#22c55e" opacity="0.9"/><rect x="799" y="89" width="22" height="22" rx="3" fill="#fff" stroke="#bbb"/><circle cx="810" cy="100" r="7" fill="#22c55e" opacity="0.9"/><text x="606" y="91" font-size="9" fill="#555">5V</text><text x="606" y="104" font-size="9" fill="#555">DIN</text><text x="606" y="117" font-size="9" fill="#555">GND</text><path d="M828,100 l8,0" stroke="#999" stroke-width="2"/><text x="719" y="140" text-anchor="middle" class="ts">WS2812B · arrow points away from DIN</text><path d="M508,100 L600,100" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="508" cy="100" r="4" fill="#22a86e"/><circle cx="600" cy="100" r="4" fill="#22a86e"/><path d="M160,195 L560,195 L560,87 L600,87" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="160" cy="195" r="4" fill="#e5484d"/><circle cx="600" cy="87" r="4" fill="#e5484d"/><path d="M160,255 L580,255 L580,113 L600,113" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="160" cy="255" r="4" fill="var(--gd-gnd)"/><circle cx="600" cy="113" r="4" fill="var(--gd-gnd)"/><line x1="470" y1="195" x2="470" y2="220" stroke="var(--fg)" stroke-width="2.5"/>
+<line x1="456" y1="220" x2="484" y2="220" stroke="var(--fg)" stroke-width="3"/>
+<path d="M456,232 Q470,226 484,232" fill="none" stroke="var(--fg)" stroke-width="3"/>
+<line x1="470" y1="229" x2="470" y2="255" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="490" y="230" class="tb" text-anchor="start" >1000 µF (stripe = −)</text><circle cx="470" cy="195" r="5" fill="#e5484d"/><circle cx="470" cy="255" r="5" fill="var(--gd-gnd)"/><text x="30" y="330" class="ts" text-anchor="start" >Power budget per target: WS2812B draws up to 60 mA per LED at full white.</text><text x="30" y="349" class="ts" text-anchor="start" >8 LEDs × 60 mA = 480 mA at 100%. The firmware caps brightness at 40% → about 190 mA.</text><text x="30" y="368" class="ts" text-anchor="start" >ESP32-C3 with radio on ≈ 90 mA. Worst case ≈ 280 mA; normally the LEDs are off most of the time (≈ 100 mA).</text><text x="30" y="387" class="ts" text-anchor="start" >A 10 000 mAh bank gives about 6 000 mAh at 5 V → 20+ hours worst case, 60 hours typical.</text><text x="30" y="406" class="ts" text-anchor="start" >A short data wire (&lt; 15 cm) from a 3.3 V pin usually works without the 74AHCT125. Add it if the LEDs flicker or show wrong colours.</text>
+</svg></div><figcaption>Figure 4 — LED strip wiring and power budget. The plate flashes white the instant a hit is detected, even if the laptop is disconnected.</figcaption></figure>
+</section>
+
+<section id="g-power" class="stack">
+<h2>Power</h2>
+<figure id="fig-power"><div class="svgwrap"><svg viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Power wiring for both layouts" font-family="var(--font-body), system-ui, sans-serif">
+<title>Power wiring for both layouts</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="900" height="440" fill="var(--panel-2)"/>
+<text x="30" y="36" class="th" text-anchor="start" >Wireless targets (default)</text><rect x="30" y="60" width="170" height="70" rx="10" fill="#2b333a" stroke="#0c0f12" stroke-width="2"/><text x="115" y="92" class="tb" text-anchor="middle" style="fill:#f4f6f8">Power bank</text><text x="115" y="112" class="ts" text-anchor="middle" style="fill:#c9d1d7">5 V USB</text><path d="M200,95 L300,95" fill="none" stroke="#8b5cf6" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="200" cy="95" r="4" fill="#8b5cf6"/><circle cx="300" cy="95" r="4" fill="#8b5cf6"/><text x="250" y="85" class="ts" text-anchor="middle" >USB-C</text><rect x="300" y="60" width="140" height="70" rx="10" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><text x="370" y="92" class="tb" text-anchor="middle" style="fill:#f4f6f8">C3 node</text><text x="370" y="112" class="ts" text-anchor="middle" style="fill:#c9d1d7">5V pin out</text><path d="M440,85 L560,85" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="440" cy="85" r="4" fill="#e5484d"/><circle cx="560" cy="85" r="4" fill="#e5484d"/><path d="M440,110 L560,110" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="440" cy="110" r="4" fill="var(--gd-gnd)"/><circle cx="560" cy="110" r="4" fill="var(--gd-gnd)"/><rect x="560" y="70" width="170" height="54" rx="8" fill="#f2f2f0" stroke="#9a9a93"/><text x="645" y="102" class="tb" text-anchor="middle" style="fill:#222">LED strip (8)</text><text x="30" y="160" class="ts" text-anchor="start" >Nothing to adjust. Pick a bank with an “always on” / low-current mode, or keep the keep-alive setting on.</text><text x="30" y="220" class="th" text-anchor="start" >Wired hub near the plates</text><rect x="30" y="245" width="140" height="80" rx="8" fill="#1f2a32" stroke="#0c0f12" stroke-width="2"/><text x="100" y="280" class="tb" text-anchor="middle" style="fill:#f4f6f8">12 V battery</text><text x="100" y="300" class="ts" text-anchor="middle" style="fill:#c9d1d7">LiFePO4 7 Ah</text><path d="M170,265 L240,265" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="170" cy="265" r="4" fill="#e5484d"/><circle cx="240" cy="265" r="4" fill="#e5484d"/><rect x="240" y="252" width="60" height="26" rx="4" fill="#f2c94c" stroke="#7a5d14"/><text x="270" y="270" class="ts" text-anchor="middle" style="fill:#222">3 A fuse</text><path d="M300,265 L360,265" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="300" cy="265" r="4" fill="#e5484d"/><circle cx="360" cy="265" r="4" fill="#e5484d"/><path d="M170,310 L360,310" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="170" cy="310" r="4" fill="var(--gd-gnd)"/><circle cx="360" cy="310" r="4" fill="var(--gd-gnd)"/><rect x="360" y="240" width="150" height="90" rx="6" fill="#1e3a8a" stroke="#0b1d4b" stroke-width="2"/><text x="435" y="275" class="tb" text-anchor="middle" style="fill:#f4f6f8">Buck converter</text><text x="435" y="295" class="ts" text-anchor="middle" style="fill:#c9d1d7">LM2596 / MP1584</text><text x="435" y="315" class="ts" text-anchor="middle" style="fill:#c9d1d7">IN 12 V → OUT 5.0 V</text><path d="M510,265 L548,265" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="510" cy="265" r="4" fill="#e5484d"/><circle cx="548" cy="265" r="4" fill="#e5484d"/><rect x="557.7" y="253" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="578" y="269.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><path d="M510,310 L548,310" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="510" cy="310" r="4" fill="var(--gd-gnd)"/><circle cx="548" cy="310" r="4" fill="var(--gd-gnd)"/><rect x="557.7" y="298" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="578" y="314.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><rect x="660" y="240" width="110" height="36" rx="6" fill="#14324a"/><text x="715" y="263" class="tb" text-anchor="middle" style="fill:#f4f6f8">Hub VIN</text><rect x="660" y="294" width="110" height="36" rx="6" fill="#14324a"/><text x="715" y="317" class="tb" text-anchor="middle" style="fill:#f4f6f8">Hub GND</text><rect x="609.7" y="246" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="630" y="262.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><rect x="609.7" y="300" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="630" y="316.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><rect x="790" y="240" width="90" height="90" rx="6" fill="#f2f2f0" stroke="#9a9a93"/><text x="835" y="280" class="tb" text-anchor="middle" style="fill:#222">LED strip</text><text x="835" y="298" class="ts" text-anchor="middle" style="fill:#555">5V · GND</text><text x="30" y="350" class="ts" text-anchor="start" >The LED strip takes +5V and GND straight from the buck converter too.</text><rect x="30" y="368" width="840" height="58" rx="8" fill="none" stroke="#e5484d" stroke-width="2"/><text x="46" y="392" class="tb" text-anchor="start" >Set the buck converter to 5.0 V with a multimeter BEFORE connecting the ESP32 or LEDs.</text><text x="46" y="414" class="tb" text-anchor="start" >Never power LEDs from the ESP32 3V3 pin. All grounds must be joined.</text>
+</svg></div><figcaption>Figure 5 — Power for the wireless layout (top) and the wired-hub layout (bottom).</figcaption></figure>
+</section>
+
+<section id="g-mount" class="stack">
+<h2>Mounting on the plate</h2>
+<figure id="fig-mount"><div class="svgwrap"><svg viewBox="0 0 1000 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Side view of a plate: where the piezo, node box and LEDs go, and where they must not go" font-family="var(--font-body), system-ui, sans-serif">
+<title>Side view of a plate: where the piezo, node box and LEDs go, and where they must not go</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="1000" height="460" fill="var(--panel-2)"/>
+<defs><marker id="ar2" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="var(--muted)"/></marker></defs><rect x="0" y="400" width="1000" height="60" fill="var(--panel)"/><line x1="0" y1="400" x2="1000" y2="400" stroke="var(--line)" stroke-width="2"/><text x="24" y="40" class="th" text-anchor="start" >Shooter</text><text x="24" y="60" class="ts" text-anchor="start" >side view</text><line x1="24" y1="240" x2="380" y2="240" stroke="var(--muted)" stroke-width="2" stroke-dasharray="8 6" marker-end="url(#ar2)"/><text x="24" y="228" class="ts" text-anchor="start" >line of fire · 10–15 m</text><path d="M430,262 Q400,320 360,392" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 5" marker-end="url(#ar2)"/><text x="300" y="340" class="ts" text-anchor="end" >fragments go down</text><rect x="700" y="110" width="14" height="290" fill="#f4f4f0" stroke="#b9b9b2"/><text x="707" y="100" class="ts" text-anchor="middle" >white backer board</text><rect x="514" y="130" width="12" height="270" fill="#59656f"/><rect x="470" y="392" width="140" height="10" fill="#59656f"/><rect x="440" y="124" width="86" height="12" fill="#59656f"/><circle cx="450" cy="142" r="5" fill="none" stroke="var(--fg)" stroke-width="2.5"/><circle cx="450" cy="152" r="5" fill="none" stroke="var(--fg)" stroke-width="2.5"/><g transform="rotate(-15 450 160)"><rect x="442" y="160" width="16" height="150" rx="2" fill="#8b969f" stroke="#2c353d" stroke-width="2"/></g><text x="430" y="112" class="ts" text-anchor="end" >AR500 plate, top tilted</text><text x="430" y="128" class="ts" text-anchor="end" >toward the shooter</text><rect x="462" y="114" width="26" height="10" rx="2" fill="#c9a13b" stroke="#7a5d14"/><circle cx="475" cy="92" r="12" fill="var(--accent)"/><text x="475" y="97" text-anchor="middle" font-size="13" font-weight="800" fill="var(--accent-ink)">1</text><path d="M488,119 L536,119 L536,330" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="488" cy="119" r="4" fill="#e8b400"/><circle cx="536" cy="330" r="4" fill="#e8b400"/><rect x="550" y="346" width="96" height="50" rx="5" fill="#f2c94c" stroke="#7a5d14" stroke-width="2"/><text x="598" y="376" class="tb" text-anchor="middle" style="fill:#222">Node box</text><path d="M536,330 L560,330 L560,346" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M542,400 L542,326 L660,326" fill="none" stroke="#3a444d" stroke-width="7"/><circle cx="670" cy="360" r="12" fill="var(--accent)"/><text x="670" y="365" text-anchor="middle" font-size="13" font-weight="800" fill="var(--accent-ink)">2</text><rect x="526" y="190" width="8" height="64" fill="#22c55e"/><path d="M534,200 L700,150 M534,244 L700,300" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4 5"/><circle cx="620" cy="222" r="12" fill="var(--accent)"/><text x="620" y="227" text-anchor="middle" font-size="13" font-weight="800" fill="var(--accent-ink)">3</text><path d="M386,170 l24,24 m0,-24 l-24,24" class="no"/><path d="M420,360 l24,24 m0,-24 l-24,24" class="no"/><text x="760" y="70" class="t" text-anchor="start" >① Piezo on the hanger bracket</text><text x="760" y="89" class="t" text-anchor="start" >    (or the back of the plate):</text><text x="760" y="108" class="t" text-anchor="start" >    epoxy, brass side to steel,</text><text x="760" y="127" class="t" text-anchor="start" >    rubber pad around it.</text><text x="760" y="170" class="t" text-anchor="start" >② Node box low and behind the</text><text x="760" y="189" class="t" text-anchor="start" >    stand, under a steel or</text><text x="760" y="208" class="t" text-anchor="start" >    plywood deflector. Power</text><text x="760" y="227" class="t" text-anchor="start" >    bank inside the box.</text><text x="760" y="270" class="t" text-anchor="start" >③ LED bar on the back of the</text><text x="760" y="289" class="t" text-anchor="start" >    stand lights the backer</text><text x="760" y="308" class="t" text-anchor="start" >    board: the shooter sees a</text><text x="760" y="327" class="t" text-anchor="start" >    glow around the plate.</text><text x="760" y="360" class="t" text-anchor="start" >✕ Never on the front face or</text><text x="760" y="379" class="t" text-anchor="start" >    in front of the stand.</text>
+</svg></div><figcaption>Figure 6 — Side view. Sensor on the hanger or back face, electronics low and behind cover, LEDs lighting a backer board.</figcaption></figure>
+<ul>
+<li>Clean the bonding spot to bare metal. Glue the piezo brass-side-down with two-part epoxy and let it cure fully. A ring of neoprene around it reduces ringing.</li>
+<li>If plates take heavy hits, bond the piezo to the hanger bracket or a small steel tab bolted to the stand instead of the plate itself. The stand carries the vibration well and the sensor lives longer.</li>
+<li>Keep the piezo lead short (under 50 cm) and use shielded cable, shield to GND at the box end only.</li>
+<li>Strain-relieve every cable with a gland or zip tie so a hard hit never pulls on solder joints.</li>
+</ul>
+</section>
+
+<section id="g-hub" class="stack">
+<h2>Hub pin map</h2>
+<p><b>Wireless layout (default): the hub needs no wiring.</b> Flash it and plug it into the laptop. The pin map below is only for the wired layout, where piezos and LEDs connect straight to the hub.</p>
+<figure id="fig-hub"><div class="svgwrap"><svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hub pin map for the wired layout on an ESP32 DevKit V1" font-family="var(--font-body), system-ui, sans-serif">
+<title>Hub pin map for the wired layout on an ESP32 DevKit V1</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="1000" height="560" fill="var(--panel-2)"/>
+<rect x="380" y="30" width="240" height="430" rx="10" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><rect x="464" y="48" width="72" height="110" rx="4" fill="#c4c9ce" stroke="#7d858c"/><text x="500" y="107" text-anchor="middle" font-size="11" font-weight="700" fill="#3a4148">WROOM-32</text><rect x="478" y="456" width="44" height="16" rx="4" fill="#b8bec4" stroke="#6f777e"/><text x="500" y="490" text-anchor="middle" class="ts">USB</text><rect x="386" y="69" width="14" height="14" rx="2" class="pin"/><text x="406" y="80" class="pl">EN</text><rect x="386" y="93" width="14" height="14" rx="2" class="pin"/><text x="406" y="104" class="pl">VP 36</text><rect x="383" y="90" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="386" y="117" width="14" height="14" rx="2" class="pin"/><text x="406" y="128" class="pl">VN 39</text><rect x="383" y="114" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="386" y="141" width="14" height="14" rx="2" class="pin"/><text x="406" y="152" class="pl">D34</text><rect x="383" y="138" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="386" y="165" width="14" height="14" rx="2" class="pin"/><text x="406" y="176" class="pl">D35</text><rect x="383" y="162" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="386" y="189" width="14" height="14" rx="2" class="pin"/><text x="406" y="200" class="pl">D32</text><rect x="383" y="186" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="386" y="213" width="14" height="14" rx="2" class="pin"/><text x="406" y="224" class="pl">D33</text><rect x="383" y="210" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="386" y="237" width="14" height="14" rx="2" class="pin"/><text x="406" y="248" class="pl">D25</text><rect x="386" y="261" width="14" height="14" rx="2" class="pin"/><text x="406" y="272" class="pl">D26</text><rect x="386" y="285" width="14" height="14" rx="2" class="pin"/><text x="406" y="296" class="pl">D27</text><rect x="386" y="309" width="14" height="14" rx="2" class="pin"/><text x="406" y="320" class="pl">D14</text><rect x="386" y="333" width="14" height="14" rx="2" class="pin"/><text x="406" y="344" class="pl">D12</text><rect x="386" y="357" width="14" height="14" rx="2" class="pin"/><text x="406" y="368" class="pl">D13</text><rect x="383" y="354" width="20" height="20" rx="3" fill="none" stroke="#22a86e" stroke-width="3"/><rect x="386" y="381" width="14" height="14" rx="2" class="pin"/><text x="406" y="392" class="pl">GND</text><rect x="383" y="378" width="20" height="20" rx="3" fill="none" stroke="var(--gd-gnd)" stroke-width="3"/><rect x="386" y="405" width="14" height="14" rx="2" class="pin"/><text x="406" y="416" class="pl">VIN</text><rect x="383" y="402" width="20" height="20" rx="3" fill="none" stroke="#e5484d" stroke-width="3"/><rect x="600" y="69" width="14" height="14" rx="2" class="pin"/><text x="594" y="80" class="pl" text-anchor="end">D23</text><rect x="600" y="93" width="14" height="14" rx="2" class="pin"/><text x="594" y="104" class="pl" text-anchor="end">D22</text><rect x="600" y="117" width="14" height="14" rx="2" class="pin"/><text x="594" y="128" class="pl" text-anchor="end">TX0</text><rect x="600" y="141" width="14" height="14" rx="2" class="pin"/><text x="594" y="152" class="pl" text-anchor="end">RX0</text><rect x="600" y="165" width="14" height="14" rx="2" class="pin"/><text x="594" y="176" class="pl" text-anchor="end">D21</text><rect x="600" y="189" width="14" height="14" rx="2" class="pin"/><text x="594" y="200" class="pl" text-anchor="end">D19</text><rect x="600" y="213" width="14" height="14" rx="2" class="pin"/><text x="594" y="224" class="pl" text-anchor="end">D18</text><rect x="600" y="237" width="14" height="14" rx="2" class="pin"/><text x="594" y="248" class="pl" text-anchor="end">D5</text><rect x="600" y="261" width="14" height="14" rx="2" class="pin"/><text x="594" y="272" class="pl" text-anchor="end">TX2</text><rect x="600" y="285" width="14" height="14" rx="2" class="pin"/><text x="594" y="296" class="pl" text-anchor="end">RX2</text><rect x="600" y="309" width="14" height="14" rx="2" class="pin"/><text x="594" y="320" class="pl" text-anchor="end">D4</text><rect x="600" y="333" width="14" height="14" rx="2" class="pin"/><text x="594" y="344" class="pl" text-anchor="end">D2</text><rect x="600" y="357" width="14" height="14" rx="2" class="pin"/><text x="594" y="368" class="pl" text-anchor="end">D15</text><rect x="600" y="381" width="14" height="14" rx="2" class="pin"/><text x="594" y="392" class="pl" text-anchor="end">GND</text><rect x="600" y="405" width="14" height="14" rx="2" class="pin"/><text x="594" y="416" class="pl" text-anchor="end">3V3</text><text x="500" y="510" text-anchor="middle" class="tb">ESP32 DevKit V1 (30-pin)</text><text x="500" y="528" text-anchor="middle" class="ts">top view, USB at the bottom</text><path d="M386,100 L300,100" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="100" r="4" fill="#e8b400"/><circle cx="300" cy="100" r="4" fill="#e8b400"/><rect x="217.4" y="88" width="65.19999999999999" height="24" rx="12" fill="var(--panel)" stroke="#e8b400" stroke-width="2.5"/><text x="250" y="104.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">T1 SIG</text><path d="M386,124 L300,124" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="124" r="4" fill="#e8b400"/><circle cx="300" cy="124" r="4" fill="#e8b400"/><rect x="217.4" y="112" width="65.19999999999999" height="24" rx="12" fill="var(--panel)" stroke="#e8b400" stroke-width="2.5"/><text x="250" y="128.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">T2 SIG</text><path d="M386,148 L300,148" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="148" r="4" fill="#e8b400"/><circle cx="300" cy="148" r="4" fill="#e8b400"/><rect x="217.4" y="136" width="65.19999999999999" height="24" rx="12" fill="var(--panel)" stroke="#e8b400" stroke-width="2.5"/><text x="250" y="152.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">T3 SIG</text><path d="M386,172 L300,172" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="172" r="4" fill="#e8b400"/><circle cx="300" cy="172" r="4" fill="#e8b400"/><rect x="217.4" y="160" width="65.19999999999999" height="24" rx="12" fill="var(--panel)" stroke="#e8b400" stroke-width="2.5"/><text x="250" y="176.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">T4 SIG</text><path d="M386,196 L300,196" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="196" r="4" fill="#e8b400"/><circle cx="300" cy="196" r="4" fill="#e8b400"/><rect x="217.4" y="184" width="65.19999999999999" height="24" rx="12" fill="var(--panel)" stroke="#e8b400" stroke-width="2.5"/><text x="250" y="200.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">T5 SIG</text><path d="M386,220 L300,220" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="220" r="4" fill="#e8b400"/><circle cx="300" cy="220" r="4" fill="#e8b400"/><rect x="217.4" y="208" width="65.19999999999999" height="24" rx="12" fill="var(--panel)" stroke="#e8b400" stroke-width="2.5"/><text x="250" y="224.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">T6 SIG</text><path d="M386,364 L300,364" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="364" r="4" fill="#22a86e"/><circle cx="300" cy="364" r="4" fill="#22a86e"/><rect x="209.2" y="352" width="81.6" height="24" rx="12" fill="var(--panel)" stroke="#22a86e" stroke-width="2.5"/><text x="250" y="368.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">LED DATA</text><path d="M386,388 L300,388" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="388" r="4" fill="var(--gd-gnd)"/><circle cx="300" cy="388" r="4" fill="var(--gd-gnd)"/><rect x="229.7" y="376" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="var(--gd-gnd)" stroke-width="2.5"/><text x="250" y="392.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">GND</text><path d="M386,412 L300,412" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="386" cy="412" r="4" fill="#e5484d"/><circle cx="300" cy="412" r="4" fill="#e5484d"/><rect x="229.7" y="400" width="40.599999999999994" height="24" rx="12" fill="var(--panel)" stroke="#e5484d" stroke-width="2.5"/><text x="250" y="416.5" text-anchor="middle" font-size="12.5" font-weight="800" style="fill:var(--fg)">+5V</text><text x="30" y="70" class="ts" text-anchor="start" >Each T SIG goes to the</text><text x="30" y="88" class="ts" text-anchor="start" >output of one piezo</text><text x="30" y="106" class="ts" text-anchor="start" >circuit (Figure 2).</text><text x="30" y="124" class="ts" text-anchor="start" ></text><text x="30" y="142" class="ts" text-anchor="start" >LED DATA → 74AHCT125</text><text x="30" y="160" class="ts" text-anchor="start" >→ 330 Ω → first strip DIN;</text><text x="30" y="178" class="ts" text-anchor="start" >chain the strip through</text><text x="30" y="196" class="ts" text-anchor="start" >all six plates.</text><text x="30" y="214" class="ts" text-anchor="start" ></text><text x="30" y="232" class="ts" text-anchor="start" >+5V / GND from the</text><text x="30" y="250" class="ts" text-anchor="start" >buck converter (Fig. 5).</text><path d="M614,340 L680,340" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><text x="688" y="345" class="ts" text-anchor="start" >D2 = built-in status LED</text><line x1="680" y1="70" x2="708" y2="70" stroke="#e8b400" stroke-width="4" stroke-linecap="round"/><text x="716" y="75" class="ts" text-anchor="start" >Piezo inputs (ADC1 only)</text><line x1="680" y1="92" x2="708" y2="92" stroke="#22a86e" stroke-width="4" stroke-linecap="round"/><text x="716" y="97" class="ts" text-anchor="start" >LED data</text><line x1="680" y1="114" x2="708" y2="114" stroke="#e5484d" stroke-width="4" stroke-linecap="round"/><text x="716" y="119" class="ts" text-anchor="start" >5 V</text><line x1="680" y1="136" x2="708" y2="136" stroke="var(--gd-gnd)" stroke-width="4" stroke-linecap="round"/><text x="716" y="141" class="ts" text-anchor="start" >Ground</text><text x="680" y="190" class="ts" text-anchor="start" >Avoid for sensors:</text><text x="680" y="208" class="ts" text-anchor="start" >· ADC2 pins (4, 12–15, 25–27):</text><text x="680" y="226" class="ts" text-anchor="start" >   no analog while Wi-Fi is on</text><text x="680" y="244" class="ts" text-anchor="start" >· strapping pins 0, 2, 5, 12, 15</text><text x="680" y="262" class="ts" text-anchor="start" >· 6–11 (internal flash)</text><rect x="670" y="460" width="300" height="78" rx="8" fill="none" stroke="var(--accent)" stroke-width="2"/><text x="686" y="488" class="tb" text-anchor="start" >Wireless layout (default):</text><text x="686" y="508" class="tb" text-anchor="start" >the hub needs no wiring —</text><text x="686" y="528" class="tb" text-anchor="start" >just USB to the laptop.</text>
+</svg></div><figcaption>Figure 7 — ESP32 DevKit V1, wired layout (up to 6 plates).</figcaption></figure>
+<div class="scroll-x"><table><thead><tr><th>Target</th><th>Piezo signal (ADC1)</th><th>Notes</th></tr></thead><tbody>
+<tr><td>T1</td><td><code>GPIO36 (VP)</code></td><td>input only</td></tr>
+<tr><td>T2</td><td><code>GPIO39 (VN)</code></td><td>input only</td></tr>
+<tr><td>T3</td><td><code>GPIO34</code></td><td>input only</td></tr>
+<tr><td>T4</td><td><code>GPIO35</code></td><td>input only</td></tr>
+<tr><td>T5</td><td><code>GPIO32</code></td><td></td></tr>
+<tr><td>T6</td><td><code>GPIO33</code></td><td></td></tr>
+</tbody></table></div>
+<div class="scroll-x"><table><thead><tr><th>Function</th><th>Pin</th></tr></thead><tbody>
+<tr><td>LED data (one strip chained through all plates, 8 LEDs per plate)</td><td><code>GPIO13</code> → 74AHCT125 → 330 Ω → DIN</td></tr>
+<tr><td>Optional second LED chain</td><td><code>GPIO14</code></td></tr>
+<tr><td>Hub status LED</td><td><code>GPIO2</code> (built in)</td></tr>
+<tr><td>Pair button</td><td><code>GPIO0</code> (BOOT button)</td></tr>
+<tr><td>Do not use</td><td>ADC2 pins for analog (<code>4, 12–15, 25–27</code>), strapping pins <code>0, 2, 5, 12, 15</code> for inputs, <code>6–11</code> (flash)</td></tr>
+</tbody></table></div>
+<h3>ESP32-S3 DevKit (up to 8 plates, wired)</h3>
+<div class="scroll-x"><table><thead><tr><th>Targets</th><th>Piezo signal</th><th>LED data</th></tr></thead><tbody>
+<tr><td>T1–T8</td><td><code>GPIO1 … GPIO8</code> (ADC1 channels 0–7)</td><td><code>GPIO16</code></td></tr>
+</tbody></table></div>
+</section>
+
+<section id="g-bench" class="stack">
+<h2>Bench test first</h2>
+<figure id="fig-bench"><div class="svgwrap"><svg viewBox="0 0 1020 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Breadboard bench test of one target before going to the range" font-family="var(--font-body), system-ui, sans-serif">
+<title>Breadboard bench test of one target before going to the range</title>
+<style>
+.t{fill:var(--fg);font-size:14px}
+.ts{fill:var(--muted);font-size:12px}
+.tb{fill:var(--fg);font-size:15px;font-weight:700}
+.th{fill:var(--fg);font-size:18px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.pin{fill:#e9d8a6;stroke:#6b5a2a;stroke-width:1}
+.pl{fill:#f4f6f8;font-size:11px;font-family:var(--font-mono),monospace}
+.box{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:6 5}
+.no{fill:none;stroke:#e5484d;stroke-width:3}
+</style>
+<rect x="0" y="0" width="1020" height="470" fill="var(--panel-2)"/>
+<g style="--fg:#1e252b;--gd-gnd:#1e252b"><rect x="200" y="50" width="580" height="380" rx="10" fill="#f4f1e8" stroke="#c9c2ae" stroke-width="2"/><line x1="220" y1="72" x2="760" y2="72" stroke="#e5484d" stroke-width="1.5"/><line x1="220" y1="86" x2="760" y2="86" stroke="#3b82f6" stroke-width="1.5"/><line x1="220" y1="400" x2="760" y2="400" stroke="#e5484d" stroke-width="1.5"/><line x1="220" y1="414" x2="760" y2="414" stroke="#3b82f6" stroke-width="1.5"/><rect x="226" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="226" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="244" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="262" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="280" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="298" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="316" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="334" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="352" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="370" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="388" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="406" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="424" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="442" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="460" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="478" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="496" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="514" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="532" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="550" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="568" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="586" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="604" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="622" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="640" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="658" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="676" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="694" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="712" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="730" y="364" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="116" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="142" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="168" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="194" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="220" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="260" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="286" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="312" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="338" width="5" height="5" fill="#cfc8b2"/><rect x="748" y="364" width="5" height="5" fill="#cfc8b2"/><text x="208" y="76" class="tb" text-anchor="start" >+</text><text x="208" y="90" class="tb" text-anchor="start" >−</text><text x="208" y="404" class="tb" text-anchor="start" >+</text><text x="208" y="418" class="tb" text-anchor="start" >−</text><path d="M226,86 L226,414" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="226" cy="86" r="4" fill="var(--gd-gnd)"/><circle cx="226" cy="414" r="4" fill="var(--gd-gnd)"/><path d="M160,140 L440,140" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="380" cy="140" r="5" fill="#e8b400"/><circle cx="440" cy="140" r="5" fill="#e8b400"/><path d="M380,140 L380,156" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="380,156 380,162 387,166 373,174 387,182 373,190 387,198 373,206 387,214 380,218 380,224" fill="none" stroke="#1e252b" stroke-width="2.5" stroke-linejoin="round"/><text x="366" y="195" class="tb" text-anchor="end" >1 MΩ</text><path d="M380,224 L380,414" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="380" cy="224" r="4" fill="var(--gd-gnd)"/><circle cx="380" cy="414" r="4" fill="var(--gd-gnd)"/><path d="M440,140 L440,161" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><polyline points="440,161 440,167 447,171 433,179 447,187 433,195 447,203 433,211 447,219 440,223 440,229" fill="none" stroke="#1e252b" stroke-width="2.5" stroke-linejoin="round"/><text x="454" y="200" class="tb" text-anchor="start" >10 kΩ</text><path d="M440,229 L440,250" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="440" cy="250" r="5" fill="#e8b400"/><path d="M440,250 L560,250" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="500" cy="250" r="5" fill="#e8b400"/><path d="M500,250 L500,272" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><line x1="500" y1="272" x2="500" y2="294" stroke="var(--fg)" stroke-width="2.5"/>
+<polygon points="488,316 512,316 500,296" fill="var(--fg)"/>
+<polyline points="484,300 488,294 512,294 516,288" fill="none" stroke="var(--fg)" stroke-width="2.5"/>
+<line x1="500" y1="316" x2="500" y2="340" stroke="var(--fg)" stroke-width="2.5"/>
+<text x="520" y="311" class="tb" text-anchor="start" >Zener</text><path d="M500,340 L500,414" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="500" cy="340" r="4" fill="var(--gd-gnd)"/><circle cx="500" cy="414" r="4" fill="var(--gd-gnd)"/></g><rect x="600" y="120" width="150" height="278" rx="10" fill="#14324a" stroke="#0b1d2b" stroke-width="2"/><rect x="652.5" y="138" width="45" height="88.96000000000001" rx="4" fill="#c4c9ce" stroke="#7d858c"/><text x="675" y="186.48000000000002" text-anchor="middle" font-size="11" font-weight="700" fill="#3a4148">C3</text><rect x="653" y="108" width="44" height="16" rx="4" fill="#b8bec4" stroke="#6f777e"/><rect x="606" y="159" width="14" height="14" rx="2" class="pin"/><text x="626" y="170" class="pl">5V</text><rect x="603" y="156" width="20" height="20" rx="3" fill="none" stroke="#e5484d" stroke-width="3"/><rect x="606" y="185" width="14" height="14" rx="2" class="pin"/><text x="626" y="196" class="pl">GND</text><rect x="603" y="182" width="20" height="20" rx="3" fill="none" stroke="var(--gd-gnd)" stroke-width="3"/><rect x="606" y="211" width="14" height="14" rx="2" class="pin"/><text x="626" y="222" class="pl">3V3</text><rect x="606" y="237" width="14" height="14" rx="2" class="pin"/><text x="626" y="248" class="pl">4</text><rect x="606" y="263" width="14" height="14" rx="2" class="pin"/><text x="626" y="274" class="pl">3</text><rect x="606" y="289" width="14" height="14" rx="2" class="pin"/><text x="626" y="300" class="pl">2</text><rect x="606" y="315" width="14" height="14" rx="2" class="pin"/><text x="626" y="326" class="pl">1</text><rect x="606" y="341" width="14" height="14" rx="2" class="pin"/><text x="626" y="352" class="pl">0</text><rect x="603" y="338" width="20" height="20" rx="3" fill="none" stroke="#e8b400" stroke-width="3"/><rect x="730" y="159" width="14" height="14" rx="2" class="pin"/><text x="724" y="170" class="pl" text-anchor="end">5</text><rect x="730" y="185" width="14" height="14" rx="2" class="pin"/><text x="724" y="196" class="pl" text-anchor="end">6</text><rect x="730" y="211" width="14" height="14" rx="2" class="pin"/><text x="724" y="222" class="pl" text-anchor="end">7</text><rect x="730" y="237" width="14" height="14" rx="2" class="pin"/><text x="724" y="248" class="pl" text-anchor="end">8</text><rect x="730" y="263" width="14" height="14" rx="2" class="pin"/><text x="724" y="274" class="pl" text-anchor="end">9</text><rect x="730" y="289" width="14" height="14" rx="2" class="pin"/><text x="724" y="300" class="pl" text-anchor="end">10</text><rect x="727" y="286" width="20" height="20" rx="3" fill="none" stroke="#22a86e" stroke-width="3"/><rect x="730" y="315" width="14" height="14" rx="2" class="pin"/><text x="724" y="326" class="pl" text-anchor="end">20</text><rect x="730" y="341" width="14" height="14" rx="2" class="pin"/><text x="724" y="352" class="pl" text-anchor="end">21</text><text x="675" y="424" text-anchor="middle" class="tb"></text><path d="M560,250 L560,348 L606,348" fill="none" stroke="#e8b400" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="560" cy="250" r="4" fill="#e8b400"/><circle cx="606" cy="348" r="4" fill="#e8b400"/><path d="M606,166 L590,166 L590,72" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="606" cy="166" r="4" fill="#e5484d"/><circle cx="590" cy="72" r="4" fill="#e5484d"/><path d="M606,192 L575,192 L575,86" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="606" cy="192" r="4" fill="var(--gd-gnd)"/><circle cx="575" cy="86" r="4" fill="var(--gd-gnd)"/><path d="M744,296 L800,296" fill="none" stroke="#22a86e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="744" cy="296" r="4" fill="#22a86e"/><circle cx="800" cy="296" r="4" fill="#22a86e"/><text x="806" y="301" class="ts" text-anchor="start" >→ 330 Ω → LED DIN</text><path d="M675,108 L675,26 L800,26" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><text x="806" y="31" class="ts" text-anchor="start" >USB to laptop (power + data)</text><circle cx="90" cy="190" r="40" fill="#c9a13b" stroke="#7a5d14" stroke-width="2"/>
+<circle cx="90" cy="190" r="24.8" fill="#e9e3d4" stroke="#9c9179" stroke-width="1.5"/>
+<circle cx="98" cy="184" r="3" fill="#b5b5b5"/>
+<circle cx="120" cy="194" r="3" fill="#b5b5b5"/>
+<text x="90" y="250" class="tb" text-anchor="middle" >Piezo on a steel offcut</text><path d="M98,180 L160,180 L160,140" fill="none" stroke="#e5484d" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><path d="M70,210 L70,300 L180,300 L180,414 L226,414" fill="none" stroke="var(--gd-gnd)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="70" cy="210" r="4" fill="var(--gd-gnd)"/><circle cx="226" cy="414" r="4" fill="var(--gd-gnd)"/><text x="90" y="340" class="ts" text-anchor="middle" >Tap the steel with a</text><text x="90" y="356" class="ts" text-anchor="middle" >mallet and watch the</text><text x="90" y="372" class="ts" text-anchor="middle" >live meter in Setup</text><text x="490" y="456" class="ts" text-anchor="middle" >Link the two blue (−) rails with a jumper — breadboard rails are not joined by default.</text>
+</svg></div><figcaption>Figure 8 — Build one target on a breadboard and test it at home before soldering six.</figcaption></figure>
+</section>
+
+<section id="g-build" class="stack">
+<h2>Assembly, step by step</h2>
+<p>Tick steps as you go (ticks are not saved).</p>
+<ol class="steps"><li><input type="checkbox" id="step-1395141363" aria-label="Step 1 done"><span><b>1.</b> Flash the hub: open the hosted app in Chrome, plug the DevKit in by USB, Connect page → <b>Install hub firmware</b>.</span></li><li><input type="checkbox" id="step-1628916785" aria-label="Step 2 done"><span><b>2.</b> Flash each C3 board the same way with <b>Install target firmware</b>. Write a number 1–6 on each board with a marker.</span></li><li><input type="checkbox" id="step-929420032" aria-label="Step 3 done"><span><b>3.</b> Bench test one C3 on a breadboard (Figure 8). Connect the app over USB, open Setup, tap the steel offcut and watch the meter jump.</span></li><li><input type="checkbox" id="step-691989790" aria-label="Step 4 done"><span><b>4.</b> Cut the LED strip into 8-LED pieces on the copper pads. Solder three wires (5V, DIN, GND) to the input end — the arrows point away from it.</span></li><li><input type="checkbox" id="step-911626829" aria-label="Step 5 done"><span><b>5.</b> Solder the piezo circuit (Figure 2) onto a small piece of perfboard: 1 MΩ across the piezo leads, 10 kΩ in series, Zener from signal to GND with its band on the signal side.</span></li><li><input type="checkbox" id="step-427499987" aria-label="Step 6 done"><span><b>6.</b> Wire the C3 (Figure 3): signal → GPIO0, LED data via 330 Ω → GPIO10, LED 5V and GND to the 5V and GND pins, 1000 µF across the LED supply (stripe = minus).</span></li><li><input type="checkbox" id="step-1358528893" aria-label="Step 7 done"><span><b>7.</b> Optional: 100 k / 100 k divider from 5V to GND with the middle to GPIO1 for supply voltage in the app.</span></li><li><input type="checkbox" id="step-1577933552" aria-label="Step 8 done"><span><b>8.</b> Insulate everything with heat-shrink. Fit the board, perfboard and power bank in the ABS box with cable glands for the piezo and LED leads.</span></li><li><input type="checkbox" id="step-1544872534" aria-label="Step 9 done"><span><b>9.</b> Power on the hub, connect the app, and press <b>Pair new target</b> on the Connect page. Then power on one node box: a new node searches for the hub on its own and appears in the Targets list within a few seconds.</span></li><li><input type="checkbox" id="step-444230997" aria-label="Step 10 done"><span><b>10.</b> Pair the nodes one at a time in plate order 1–6, so the numbers match your layout. To move a node to another hub, hold its BOOT button for 5 s.</span></li><li><input type="checkbox" id="step-927089453" aria-label="Step 11 done"><span><b>11.</b> At the range, bond the piezos (Figure 6), place boxes behind cover, run LED leads behind the plates, and position the white backer boards.</span></li><li><input type="checkbox" id="step-1550131404" aria-label="Step 12 done"><span><b>12.</b> Calibrate each plate (below) and run a Free Practice round with a mallet before going hot.</span></li></ol>
+</section>
+
+<section id="g-test" class="stack">
+<h2>Testing and calibration</h2>
+<ol>
+<li><b>Multimeter, power off:</b> no short between 5V and GND (should read more than a few hundred ohms). Piezo leads to GND through 1 MΩ should read close to 1 MΩ.</li>
+<li><b>Multimeter, power on:</b> 4.8–5.2 V between 5V and GND on each node. About 2.5 V on GPIO1 if you fitted the divider.</li>
+<li><b>Live signal:</b> Setup → Sensors. The meter should sit near the bottom when nothing touches the plate and jump high when you strike it.</li>
+<li><b>Calibrate:</b> press Calibrate, keep still for 3 s while it measures noise, then hit the plate. Accept the suggested threshold.</li>
+<li><b>Crosstalk:</b> hit each plate hard and check only that plate registers. If a neighbour also fires, raise its threshold or add rubber between stand and ground.</li>
+</ol>
+</section>
+
+<section id="g-trouble" class="stack">
+<h2>Troubleshooting</h2>
+<div class="scroll-x"><table><thead><tr><th>Problem</th><th>Try this</th></tr></thead><tbody>
+<tr><td>False hits (wind, nearby plates)</td><td>Raise the threshold; shorten or shield the piezo cable; keep the crosstalk window on (default 5 ms); put rubber under the stand; increase “ignore time after a hit”.</td></tr>
+<tr><td>Missed hits</td><td>Lower the threshold; re-bond the piezo to bare metal with epoxy; move it closer to where bullets land; check the Zener isn’t reversed (band to signal).</td></tr>
+<tr><td>Double hits from one shot</td><td>Raise “ignore time after a hit” to 200–300 ms. Steel rings for a while after a hit.</td></tr>
+<tr><td>LEDs flicker or show wrong colours</td><td>Join all grounds; fit the 1000 µF capacitor; keep the data wire short; add the 74AHCT125 level shifter.</td></tr>
+<tr><td>Node shows offline</td><td>Power bank switched itself off — turn on its low-current mode, or keep keep-alive on in Setup. Check the node is within sight of the hub.</td></tr>
+<tr><td>Bluetooth can’t find the hub</td><td>Use Chrome or Edge (not Safari/Firefox); turn Bluetooth on; on Android allow Location for the browser; disconnect USB/Wi-Fi sessions first.</td></tr>
+<tr><td>Wi-Fi app won’t load</td><td>Type <code>http://</code>, not <code>https://</code>. Try <code>http://192.168.4.1</code> on the hub’s own network <code>SteelStrike-XXXX</code>. Some phones don’t resolve <code>.local</code> — use the IP shown on the Connect page.</td></tr>
+<tr><td>USB port not listed</td><td>Use a data USB cable (not charge-only). Install the CP210x or CH340 driver on Windows if the board doesn’t show up.</td></tr>
+<tr><td>Nodes stop after the hub joins Wi-Fi</td><td>Normal for a few seconds: the hub changed radio channel to match the router and nodes search for it again automatically.</td></tr>
+</tbody></table></div>
+</section>
+
+<section id="g-safety" class="stack">
+<h2>Safety</h2>
+<div class="warn stack">
+<p><b>The range’s rules and the range safety officer come first.</b> This system is a scoring aid. It never controls when the line is hot or cold.</p>
+<ul>
+<li>Shoot steel only at or beyond the minimum distance in your range rules and the plate maker’s guidance — typically at least 10 m for handgun calibres on AR500, much further for rifles. Only shoot plates rated for the calibre.</li>
+<li>Plates should be in good condition (no craters or pitting) and tilted so fragments go down into the ground.</li>
+<li>All electronics, boxes and cables sit behind cover and out of the line of fire. Nothing electronic may be visible from the front of a plate.</li>
+<li>Never go downrange to adjust a sensor, box or LED while the line is hot. Make changes during a cease-fire only.</li>
+<li>Everyone near the line wears eye and ear protection, including spectators watching the scoreboard.</li>
+</ul>
+</div>
+</section>
+</article></div>
+</main>
+</body>
+</html>

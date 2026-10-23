@@ -1,0 +1,28 @@
+{
+  "name": "steel-strike-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:fw": "node scripts/build-fw.mjs",
+    "build:demo": "VITE_DEMO=1 vite build --outDir dist-demo && node scripts/demo-page.mjs",
+    "guide": "node scripts/build-guide.mjs",
+    "test": "vitest run",
+    "e2e": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "preact": "^10.29.8"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@preact/preset-vite": "^2.10.6",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.21",
+    "vite-plugin-singlefile": "^2.3.3",
+    "vitest": "^2.1.9",
+    "esbuild": "^0.21.5"
+  }
+}

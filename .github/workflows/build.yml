@@ -1,0 +1,107 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.platformio
+          key: pio-${{ hashFiles('firmware/platformio.ini') }}
+
+      - name: Install
+        run: |
+          pip install platformio
+          cd web && npm ci
+
+      - name: Test web app
+        run: |
+          cd web
+          npm run typecheck
+          npm test
+
+      - name: Build web app
+        run: |
+          cd web
+          npm run build
+          npm run build:fw
+          npm run guide
+
+      - name: Build firmware
+        run: |
+          cd firmware
+          pio run -e hub_esp32 -e node_c3 -e hub_esp32_wired -e hub_esp32s3
+          pio run -e hub_esp32 -t buildfs
+
+      - name: Collect firmware for one-click install
+        run: |
+          set -e
+          P=~/.platformio/packages/framework-arduinoespressif32/tools/partitions
+          OUT=web/dist/firmware
+          mkdir -p $OUT/hub $OUT/hub-wired $OUT/node
+          cp firmware/.pio/build/hub_esp32/{bootloader.bin,partitions.bin,firmware.bin,littlefs.bin} $OUT/hub/
+          # Wired hub: same board, partitions and web-app image, different firmware
+          cp firmware/.pio/build/hub_esp32_wired/{bootloader.bin,partitions.bin,firmware.bin} $OUT/hub-wired/
+          cp firmware/.pio/build/hub_esp32/littlefs.bin $OUT/hub-wired/
+          cp $P/boot_app0.bin $OUT/hub-wired/
+          cp firmware/.pio/build/node_c3/{bootloader.bin,partitions.bin,firmware.bin} $OUT/node/
+          cp $P/boot_app0.bin $OUT/hub/
+          cp $P/boot_app0.bin $OUT/node/
+          cp web/public/firmware/manifest-*.json $OUT/
+          cp docs/wiring-guide.html web/dist/
+
+      - name: End-to-end tests
+        run: |
+          cd web
+          npx playwright install --with-deps chromium
+          npm run e2e
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: |
+            firmware/.pio/build/*/firmware.bin
+            firmware/.pio/build/hub_esp32/littlefs.bin
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: web/dist
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
