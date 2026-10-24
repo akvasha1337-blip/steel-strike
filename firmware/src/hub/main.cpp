@@ -778,7 +778,10 @@ static void startAp() {
 
 static void startWifi() {
   WiFi.persistent(false);
-  WiFi.setSleep(false);  // keep the radio awake for ESP-NOW
+  // Modem sleep must stay on: with Bluetooth also running, the ESP32 radio coexistence code
+  // aborts in esp_bt_controller_enable() if Wi-Fi power save is off (WIFI_PS_NONE).
+  // ESP-NOW still works; nodes retry the rare packet that lands in a sleep window.
+  WiFi.setSleep(true);
   if (wifiSsid.length()) {
     WiFi.mode(WIFI_STA);
     WiFi.begin(wifiSsid.c_str(), wifiPass.c_str());
@@ -897,6 +900,7 @@ void setup() {
   startWifi();
   startNow();
   startWeb();
+  esp_wifi_set_ps(WIFI_PS_MIN_MODEM);  // see startWifi(): required before BLE starts
   startBle();
 
   xTaskCreatePinnedToCore(nowTask, "now", 6144, nullptr, 3, nullptr, 0);
