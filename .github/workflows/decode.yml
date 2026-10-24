@@ -1,0 +1,21 @@
+name: Decode crash
+on:
+  push:
+    branches: [debug/decode-boot-crash]
+jobs:
+  decode:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: 82fe9cc }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install platformio
+      - run: cd firmware && pio run -e hub_esp32_wired
+      - name: addr2line
+        run: |
+          cd firmware
+          E=.pio/build/hub_esp32_wired/firmware.elf
+          sha256sum $E
+          A2L=$(find ~/.platformio/packages -name 'xtensa-esp32-elf-addr2line' | head -1)
+          $A2L -pfiaC -e $E 0x40083f95 0x40095dc9 0x4009b9cd 0x40157fb8 0x40157dd7 0x40124885 0x400e3252 0x400d6e82 0x400f6f8a
